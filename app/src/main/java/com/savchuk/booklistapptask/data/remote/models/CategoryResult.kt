@@ -1,6 +1,6 @@
 package com.savchuk.booklistapptask.data.remote.models
 
-data class Result(
+data class CategoryResult(
     val display_name: String,
     val list_name: String,
     val list_name_encoded: String,
