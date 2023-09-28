@@ -1,6 +1,6 @@
 package com.savchuk.booklistapptask.data.remote.models
 
-data class BookResponse(
-    val results: List<Result>,
+data class BookCategoryResponse(
+    val categoryResults: List<CategoryResult>,
     val status: String
 )
