@@ -2,6 +2,8 @@ package com.savchuk.booklistapptask.data.local
 
 import com.savchuk.booklistapptask.data.BooKCategoryDataModel
 import com.savchuk.booklistapptask.data.BookDataSource
+import com.savchuk.booklistapptask.data.local.entity.BookCategoryEntity
+import com.savchuk.booklistapptask.domain.Mapper
 import javax.inject.Inject
 
 interface LocalBookDataSource : BookDataSource {
@@ -12,7 +14,7 @@ interface LocalBookDataSource : BookDataSource {
 
     class Base @Inject constructor(
         private val dao: BookDao,
-        private val mapper: CategoryLocalToDataMapper
+        private val mapper: Mapper<BookCategoryEntity, BooKCategoryDataModel>
     ) : LocalBookDataSource {
 
         override suspend fun insertBookCategories(list: List<BooKCategoryDataModel>) {
