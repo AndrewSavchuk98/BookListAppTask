@@ -5,6 +5,7 @@ import com.savchuk.booklistapptask.data.remote.RemoteBookDataSource
 import com.savchuk.booklistapptask.domain.AppException
 import com.savchuk.booklistapptask.domain.AppResult
 import com.savchuk.booklistapptask.domain.BookRepository
+import com.savchuk.booklistapptask.domain.models.Book
 import com.savchuk.booklistapptask.domain.models.BookCategory
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -20,12 +21,24 @@ class BaseBookRepositoryImpl @Inject constructor(
         withContext(dispatcher) {
             val localCategory = localBookDataSource.getBookCategory()
             return@withContext try {
-                val remoteCategory =  remoteBookDataSource.getBookCategory()
+                val remoteCategory = remoteBookDataSource.getBookCategory()
                 localBookDataSource.deleteAllCategory(remoteCategory)
                 localBookDataSource.insertBookCategories(remoteCategory)
                 AppResult.Success(remoteCategory.map { it.toDomainModel() })
             } catch (e: AppException) {
                 AppResult.Error(e.message, localCategory.map { it.toDomainModel() })
+            }
+        }
+
+    override suspend fun getBooksListByName(listName: String): AppResult<List<Book>> =
+        withContext(dispatcher) {
+            return@withContext try {
+                val remoteBook = remoteBookDataSource.getBooksList(listName)
+                AppResult.Success(remoteBook.map {
+                    it.mapToDomain()
+                })
+            } catch (e: AppException) {
+                AppResult.Error(e.message)
             }
         }
 }

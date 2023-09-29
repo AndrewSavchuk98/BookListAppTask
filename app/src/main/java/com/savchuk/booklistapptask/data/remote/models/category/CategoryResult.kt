@@ -1,4 +1,4 @@
-package com.savchuk.booklistapptask.data.remote.models
+package com.savchuk.booklistapptask.data.remote.models.category
 
 data class CategoryResult(
     val display_name: String,

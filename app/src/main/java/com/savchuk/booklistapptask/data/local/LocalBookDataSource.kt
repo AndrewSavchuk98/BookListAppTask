@@ -1,6 +1,7 @@
 package com.savchuk.booklistapptask.data.local
 
 import com.savchuk.booklistapptask.data.BooKCategoryDataModel
+import com.savchuk.booklistapptask.data.BookDataModel
 import com.savchuk.booklistapptask.data.BookDataSource
 import com.savchuk.booklistapptask.data.local.entity.BookCategoryEntity
 import com.savchuk.booklistapptask.domain.Mapper
@@ -35,6 +36,10 @@ interface LocalBookDataSource : BookDataSource {
             } catch (e: Exception) {
                 throw IllegalStateException(e)
             }
+        }
+
+        override suspend fun getBooksList(listName: String): List<BookDataModel> {
+            TODO("Not yet implemented")
         }
     }
 }
