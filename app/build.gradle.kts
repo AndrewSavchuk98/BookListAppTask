@@ -92,5 +92,10 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
 
+    val navVersion = "2.7.3"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
 
 }

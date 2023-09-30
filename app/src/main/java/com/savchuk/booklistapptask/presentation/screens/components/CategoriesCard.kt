@@ -1,5 +1,6 @@
 package com.savchuk.booklistapptask.presentation.screens.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,13 +23,20 @@ import androidx.compose.ui.unit.sp
 import com.savchuk.booklistapptask.ui.theme.TextSecondColor
 
 @Composable
-fun CategoriesCard(name: String, publishedDate: String, modifier: Modifier = Modifier) {
+fun CategoriesCard(
+    name: String,
+    publishedDate: String,
+    onCardClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(onClick = onCardClick),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 18.dp
+            defaultElevation = 8.dp
         )
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -36,7 +44,7 @@ fun CategoriesCard(name: String, publishedDate: String, modifier: Modifier = Mod
                 text = name, style = TextStyle(
                     fontFamily = FontFamily.Serif,
                     fontSize = 18.sp
-                    )
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -61,7 +69,11 @@ fun CategoriesCardPreview() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        CategoriesCard("Combined Print and E-Book Fiction", "2023-10-08")
+        CategoriesCard(
+            name = "Combined Print and E-Book Fiction",
+            publishedDate = "2023-10-08",
+            onCardClick = {}
+        )
     }
 
 }

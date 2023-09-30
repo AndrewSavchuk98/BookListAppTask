@@ -8,6 +8,7 @@ import com.savchuk.booklistapptask.data.remote.models.category.CategoryResult
 import com.savchuk.booklistapptask.domain.Mapper
 import com.savchuk.booklistapptask.domain.ServerNotRespond
 import retrofit2.HttpException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 interface RemoteBookDataSource : BookDataSource {
@@ -25,7 +26,7 @@ interface RemoteBookDataSource : BookDataSource {
                 }
             } catch (e: HttpException) {
                 throw ServerNotRespond()
-            } catch (e: Exception) {
+            } catch (e: UnknownHostException) {
                 throw IllegalStateException()
             }
         }

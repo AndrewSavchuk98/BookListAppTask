@@ -7,7 +7,7 @@ import retrofit2.http.Path
 
 interface BookApi {
 
-    @GET("/names.json")
+    @GET("names.json")
     suspend fun getBooksCategoryResponse(): BookCategoryResponse
 
     @GET("{date}/{list}.json")

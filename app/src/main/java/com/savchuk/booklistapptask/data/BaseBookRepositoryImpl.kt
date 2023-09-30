@@ -1,5 +1,6 @@
 package com.savchuk.booklistapptask.data
 
+import android.util.Log
 import com.savchuk.booklistapptask.data.local.LocalBookDataSource
 import com.savchuk.booklistapptask.data.remote.RemoteBookDataSource
 import com.savchuk.booklistapptask.domain.AppException
@@ -22,10 +23,11 @@ class BaseBookRepositoryImpl @Inject constructor(
             val localCategory = localBookDataSource.getBookCategory()
             return@withContext try {
                 val remoteCategory = remoteBookDataSource.getBookCategory()
-                localBookDataSource.deleteAllCategory(remoteCategory)
-                localBookDataSource.insertBookCategories(remoteCategory)
+                //localBookDataSource.deleteAllCategory(remoteCategory)
+                //localBookDataSource.insertBookCategories(remoteCategory)
+                Log.d("TAG", "IS $localCategory")
                 AppResult.Success(remoteCategory.map { it.toDomainModel() })
-            } catch (e: AppException) {
+            } catch (e: Exception) {
                 AppResult.Error(e.message, localCategory.map { it.toDomainModel() })
             }
         }
