@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Книжковий додаток</string>
+    <string name="text_button_buy">Купити на</string>
+    <string name="author">Автор: %1$s</string>
+    <string name="publisher">Видавник: %1$s</string>
+    <string name="rank">Ранг: %1$s</string>
+    <string name="book_app">Книжковий додаток</string>
+    <string name="book_image">Картинка книги</string>
+    <string name="retry">Повторити</string>
+    <string name="dismiss">Закрити</string>
+</resources>
