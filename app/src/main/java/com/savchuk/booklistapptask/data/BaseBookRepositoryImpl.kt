@@ -3,7 +3,6 @@ package com.savchuk.booklistapptask.data
 import android.util.Log
 import com.savchuk.booklistapptask.data.local.LocalBookDataSource
 import com.savchuk.booklistapptask.data.remote.RemoteBookDataSource
-import com.savchuk.booklistapptask.domain.AppException
 import com.savchuk.booklistapptask.domain.AppResult
 import com.savchuk.booklistapptask.domain.BookRepository
 import com.savchuk.booklistapptask.domain.models.Book
@@ -23,8 +22,8 @@ class BaseBookRepositoryImpl @Inject constructor(
             val localCategory = localBookDataSource.getBookCategory()
             return@withContext try {
                 val remoteCategory = remoteBookDataSource.getBookCategory()
-                //localBookDataSource.deleteAllCategory(remoteCategory)
-                //localBookDataSource.insertBookCategories(remoteCategory)
+                localBookDataSource.deleteAllCategory(remoteCategory)
+                localBookDataSource.insertBookCategories(remoteCategory)
                 Log.d("TAG", "IS $localCategory")
                 AppResult.Success(remoteCategory.map { it.toDomainModel() })
             } catch (e: Exception) {
@@ -39,8 +38,9 @@ class BaseBookRepositoryImpl @Inject constructor(
                 AppResult.Success(remoteBook.map {
                     it.mapToDomain()
                 })
-            } catch (e: AppException) {
-                AppResult.Error(e.message)
+            } catch (e: Exception) {
+                Log.d("TAG", e.message.toString())
+                AppResult.Error("No Internet Connection")
             }
         }
 }

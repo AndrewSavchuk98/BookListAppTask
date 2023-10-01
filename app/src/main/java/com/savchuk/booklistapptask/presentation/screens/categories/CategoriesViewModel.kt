@@ -16,37 +16,34 @@ class CategoriesViewModel @Inject constructor(
     private val useCase: GetBookCategoriesUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CategoryState())
-    val state: StateFlow<CategoryState> get() = _state
+    private val _state = MutableStateFlow<MainCategoryState>(MainCategoryState.Loading)
+    val state: StateFlow<MainCategoryState> get() = _state
 
     init {
+        fetchRequest()
+    }
+
+    fun fetchRequest() {
         viewModelScope.launch {
             when (val result = useCase.invoke()) {
-                is AppResult.Error -> {
-
-                }
-
-                is AppResult.Loading -> {
-                    _state.value = _state.value.copy(
-                        list = result.data ?: emptyList(),
-                        isLoading = true
-                    )
-                }
-
-                is AppResult.Success -> {
-                    _state.value = _state.value.copy(
-                        list = result.data ?: emptyList(),
-                        isLoading = false
-                    )
-                }
+                is AppResult.Error -> _state.value =
+                    MainCategoryState.Error(result.message.orEmpty(), result.data)
+                is AppResult.Loading -> _state.value = MainCategoryState.Loading
+                is AppResult.Success -> _state.value =
+                    MainCategoryState.Success(result.data ?: emptyList())
             }
-
         }
     }
 
 }
 
-data class CategoryState(
-    val list: List<BookCategory> = emptyList(),
-    val isLoading: Boolean = false
-)
+sealed class MainCategoryState {
+    object Loading : MainCategoryState()
+    data class Success(val list: List<BookCategory>) : MainCategoryState()
+    data class Error(val massage: String, val data: List<BookCategory>?) : MainCategoryState()
+}
+
+sealed class CategoryEvent {
+    object EnterScreen : CategoryEvent()
+    object ReloadScreen : CategoryEvent()
+}
