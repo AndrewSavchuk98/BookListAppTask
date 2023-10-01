@@ -21,7 +21,7 @@ data class BooKCategoryDataModel(
     fun toDomainModel(): BookCategory {
         return BookCategory(
             name = name,
-            lastPublishedDate = oldestPublishedDate
+            lastPublishedDate = newestPublishedDate
         )
     }
 }
