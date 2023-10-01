@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savchuk.booklistapptask.domain.AppResult
 import com.savchuk.booklistapptask.domain.models.Book
-import com.savchuk.booklistapptask.domain.models.BookCategory
 import com.savchuk.booklistapptask.domain.use_cases.GetBooksByCategoryName
+import com.savchuk.booklistapptask.presentation.navigation.Screen.BookScreen.EXTRA_LIST_NAME
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +19,7 @@ class BookViewModel @Inject constructor(
     private val useCase: GetBooksByCategoryName
 ) : ViewModel() {
 
-    private val listName: String = checkNotNull(savedStateHandle["listName"])
+    private val listName: String = checkNotNull(savedStateHandle[EXTRA_LIST_NAME])
 
     private val _state = MutableStateFlow<BookState>(BookState.Loading)
     val state: StateFlow<BookState> get() = _state
@@ -28,11 +28,12 @@ class BookViewModel @Inject constructor(
         fetchData()
     }
 
-    fun fetchData(){
+    fun fetchData() {
         viewModelScope.launch {
             when (val result = useCase.invoke(listName)) {
                 is AppResult.Error -> _state.value =
                     BookState.Error(result.message.orEmpty(), result.data)
+
                 is AppResult.Loading -> {
                     _state.value = BookState.Loading
                 }
