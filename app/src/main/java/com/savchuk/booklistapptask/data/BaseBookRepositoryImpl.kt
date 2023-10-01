@@ -33,14 +33,19 @@ class BaseBookRepositoryImpl @Inject constructor(
 
     override suspend fun getBooksListByName(listName: String): AppResult<List<Book>> =
         withContext(dispatcher) {
+            val localBook = localBookDataSource.getBooksList(listName)
+            Log.d("TAG", localBook.toString())
+
             return@withContext try {
                 val remoteBook = remoteBookDataSource.getBooksList(listName)
+                localBookDataSource.deleteBooks(remoteBook)
+                localBookDataSource.insertBooks(remoteBook, listName)
                 AppResult.Success(remoteBook.map {
                     it.mapToDomain()
                 })
             } catch (e: Exception) {
                 Log.d("TAG", e.message.toString())
-                AppResult.Error("No Internet Connection")
+                AppResult.Error("No Internet Connection", localBook.map { it.mapToDomain() })
             }
         }
 }

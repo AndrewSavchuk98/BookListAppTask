@@ -1,5 +1,6 @@
 package com.savchuk.booklistapptask.data
 
+import com.savchuk.booklistapptask.data.local.entity.BookEntity
 import com.savchuk.booklistapptask.domain.models.Book
 import com.savchuk.booklistapptask.domain.models.BookLink
 
@@ -17,6 +18,21 @@ data class BookDataModel(
     val rank: Int,
     val title: String,
 ) {
+    fun mapToLocal(): BookEntity {
+        return BookEntity(
+            title = title,
+            description = description,
+            author = author,
+            publisher = publisher,
+            bookImage = bookImage,
+            rank = rank,
+            amazonProductUrl = amazonProductUrl,
+            bookUri = bookUri,
+            contributor = contributor,
+            price = price,
+            listName = ""
+        )
+    }
 
     fun mapToDomain(): Book {
         return Book(
@@ -28,6 +44,5 @@ data class BookDataModel(
             rank = rank,
             linkToBuy = buyLinks.map { BookLink(it.name, it.link) }
         )
-
     }
 }
