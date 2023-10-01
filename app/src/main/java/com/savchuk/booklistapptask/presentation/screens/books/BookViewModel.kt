@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.savchuk.booklistapptask.domain.AppResult
 import com.savchuk.booklistapptask.domain.models.Book
+import com.savchuk.booklistapptask.domain.models.BookCategory
 import com.savchuk.booklistapptask.domain.use_cases.GetBooksByCategoryName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,25 +21,25 @@ class BookViewModel @Inject constructor(
 
     private val listName: String = checkNotNull(savedStateHandle["listName"])
 
-    private val _state = MutableStateFlow(BookState())
+    private val _state = MutableStateFlow<BookState>(BookState.Loading)
     val state: StateFlow<BookState> get() = _state
 
     init {
+        fetchData()
+    }
+
+    fun fetchData(){
         viewModelScope.launch {
             when (val result = useCase.invoke(listName)) {
-                is AppResult.Error -> TODO()
+                is AppResult.Error -> _state.value =
+                    BookState.Error(result.message.orEmpty(), result.data)
                 is AppResult.Loading -> {
-                    _state.value = _state.value.copy(
-                        list = result.data ?: emptyList(),
-                        isLoading = true
-                    )
+                    _state.value = BookState.Loading
                 }
 
                 is AppResult.Success -> {
-                    _state.value = _state.value.copy(
-                        list = result.data ?: emptyList(),
-                        isLoading = false
-                    )
+                    _state.value =
+                        BookState.Success(result.data.orEmpty())
                 }
             }
         }
@@ -46,7 +47,8 @@ class BookViewModel @Inject constructor(
 
 }
 
-data class BookState(
-    val list: List<Book> = emptyList(),
-    val isLoading: Boolean = false
-)
+sealed class BookState {
+    object Loading : BookState()
+    data class Success(val list: List<Book>) : BookState()
+    data class Error(val massage: String, val data: List<Book>?) : BookState()
+}

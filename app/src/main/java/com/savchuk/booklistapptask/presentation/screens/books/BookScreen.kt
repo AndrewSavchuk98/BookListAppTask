@@ -12,15 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.savchuk.booklistapptask.domain.models.Book
 import com.savchuk.booklistapptask.presentation.screens.components.BookCard
+import com.savchuk.booklistapptask.presentation.screens.components.ErrorComponent
 import com.savchuk.booklistapptask.presentation.screens.components.LinkDialog
 import com.savchuk.booklistapptask.presentation.screens.components.LinkWebView
+import com.savchuk.booklistapptask.presentation.screens.components.LoadingComponent
 
 @Composable
 fun BookScreen(
     modifier: Modifier = Modifier,
     viewModel: BookViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state.collectAsState()
+    val bookState = viewModel.state.collectAsState()
     var showLinksDialog by remember {
         mutableStateOf(false)
     }
@@ -36,39 +38,89 @@ fun BookScreen(
         mutableStateOf("")
     }
 
-    LazyColumn(modifier = modifier) {
-        items(state.value.list) {
-            BookCard(
-                name = it.name,
-                description = it.description,
-                author = it.author,
-                publisher = it.publisher,
-                image = it.image,
-                rank = it.rank,
-                onShowClick = {
-                    showLinksDialog = true
-                    currentBook = it
+    when (val state = bookState.value) {
+        is BookState.Error -> {
+
+            ErrorComponent(errorText = state.massage, onRetryClick = { viewModel.fetchData() })
+            if (state.data != null) {
+                LazyColumn(modifier = modifier) {
+                    items(state.data) {
+                        BookCard(
+                            name = it.name,
+                            description = it.description,
+                            author = it.author,
+                            publisher = it.publisher,
+                            image = it.image,
+                            rank = it.rank,
+                            onShowClick = {
+                                showLinksDialog = true
+                                currentBook = it
+                            }
+                        )
+                    }
                 }
-            )
+                if (showLinksDialog) {
+                    currentBook?.linkToBuy?.let {
+                        LinkDialog(
+                            onLinkClicked = { link ->
+                                showWeb = true
+                                currentLink = link
+                                showLinksDialog = false
+                            },
+                            onDismissRequest = { showLinksDialog = false },
+                            list = it
+                        )
+                    }
+                }
+
+                if (showWeb) {
+                    LinkWebView(url = currentLink, modifier = modifier)
+                }
+            }
+        }
+
+        BookState.Loading -> LoadingComponent()
+        is BookState.Success -> {
+            LazyColumn(modifier = modifier) {
+                items(state.list) {
+                    BookCard(
+                        name = it.name,
+                        description = it.description,
+                        author = it.author,
+                        publisher = it.publisher,
+                        image = it.image,
+                        rank = it.rank,
+                        onShowClick = {
+                            showLinksDialog = true
+                            currentBook = it
+                        }
+                    )
+                }
+            }
+            if (showLinksDialog) {
+                currentBook?.linkToBuy?.let {
+                    LinkDialog(
+                        onLinkClicked = { link ->
+                            showWeb = true
+                            currentLink = link
+                            showLinksDialog = false
+                        },
+                        onDismissRequest = { showLinksDialog = false },
+                        list = it
+                    )
+                }
+            }
+
+            if (showWeb) {
+                LinkWebView(url = currentLink, modifier = modifier)
+            }
         }
     }
 
-    if (showLinksDialog) {
-        currentBook?.linkToBuy?.let {
-            LinkDialog(
-                onLinkClicked = { link ->
-                    showWeb = true
-                    currentLink = link
-                    showLinksDialog = false
-                },
-                onDismissRequest = { showLinksDialog = false },
-                list = it
-            )
-        }
-    }
 
-    if (showWeb) {
-        LinkWebView(url = currentLink, modifier = modifier)
-    }
+}
+
+@Composable
+fun BookContent() {
 
 }
