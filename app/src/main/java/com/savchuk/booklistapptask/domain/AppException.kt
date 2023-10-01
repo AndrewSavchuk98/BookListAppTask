@@ -1,8 +1,8 @@
 package com.savchuk.booklistapptask.domain
 
-abstract class AppException : RuntimeException()
+abstract class AppException : Throwable()
 
 class ServerNotRespond: AppException()
 
-class NotInternetConnection: AppException()
+class NoInternetConnection: AppException()
 
