@@ -40,8 +40,6 @@ fun BookScreen(
 
     when (val state = bookState.value) {
         is BookState.Error -> {
-
-            ErrorComponent(errorText = state.massage, onRetryClick = { viewModel.fetchData() })
             if (state.data != null) {
                 LazyColumn(modifier = modifier) {
                     items(state.data) {
@@ -53,29 +51,14 @@ fun BookScreen(
                             image = it.image,
                             rank = it.rank,
                             onShowClick = {
-                                showLinksDialog = true
-                                currentBook = it
+
                             }
                         )
                     }
                 }
-                if (showLinksDialog) {
-                    currentBook?.linkToBuy?.let {
-                        LinkDialog(
-                            onLinkClicked = { link ->
-                                showWeb = true
-                                currentLink = link
-                                showLinksDialog = false
-                            },
-                            onDismissRequest = { showLinksDialog = false },
-                            list = it
-                        )
-                    }
-                }
 
-                if (showWeb) {
-                    LinkWebView(url = currentLink, modifier = modifier)
-                }
+            } else {
+                ErrorComponent(errorText = state.massage, onRetryClick = { viewModel.fetchData() })
             }
         }
 
@@ -116,11 +99,4 @@ fun BookScreen(
             }
         }
     }
-
-
-}
-
-@Composable
-fun BookContent() {
-
 }
